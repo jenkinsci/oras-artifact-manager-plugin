@@ -110,6 +110,7 @@ oras manifest fetch localhost:5000/test@sha256:4ab3a792e7052bb85cd2d75c8a5ae4910
   ]
 }
 ```
+![zot.png](docs/zot.png)
 
 ## Getting started
 
@@ -120,6 +121,8 @@ registry configuration.
 
 Archived artifacts and stashes from every job will then be stored in the configured registry,
 following the model described above.
+
+![config.png](docs/config.png)
 
 ## Issues
 
