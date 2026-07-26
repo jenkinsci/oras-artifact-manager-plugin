@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:c="/lib/credentials">
+    <f:section title="${%Section_title}">
+        <f:entry title="${%RegistryUrl_title}" field="registryUrl">
+            <f:textbox/>
+        </f:entry>
+        <f:entry title="${%Credentials_title}" field="credentialsId">
+            <c:select expressionAllowed="false"/>
+        </f:entry>
+        <f:entry title="${%Prefix_title}" field="prefix">
+            <f:textbox/>
+        </f:entry>
+        <f:entry title="${%Insecure_title}" field="insecure">
+            <f:checkbox/>
+        </f:entry>
+        <f:validateButton title="${%Validate_title}" progress="${%Validate_progress}" method="validateOrasConfig"
+                           with="registryUrl,credentialsId,prefix,insecure"/>
+    </f:section>
+</j:jelly>

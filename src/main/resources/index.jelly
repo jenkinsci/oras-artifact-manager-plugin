@@ -1,4 +1,13 @@
 <?jelly escape-by-default='true'?>
 <div>
-    ORAS Artifact Manager Plugin
+    Stores archived build artifacts and stashes in an OCI registry using
+    <a href="https://oras.land/">ORAS</a>.
+    <p>
+        Each Jenkins job is mapped to an OCI repository (its full name, sanitized), and each build's
+        artifacts are anchored by a small "root" artifact tagged with the build number. Every
+        archived file is pushed as its own single-layer artifact that refers back to the build's
+        root artifact using the OCI 1.1 referrers mechanism, so the set of files archived for a
+        build can be discovered with a single referrers API call.
+    </p>
 </div>
+
