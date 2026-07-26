@@ -8,7 +8,7 @@ import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredenti
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.ExtensionList;
-import hudson.model.AbstractDescribableImpl;
+import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.security.ACL;
@@ -35,8 +35,7 @@ import org.slf4j.LoggerFactory;
  * Global configuration of the ORAS registry used to store archived artifacts and stashes.
  */
 @Extension
-public class OrasGenericArtifactConfig extends AbstractDescribableImpl<OrasGenericArtifactConfig>
-        implements Serializable {
+public class OrasGenericArtifactConfig implements Describable<OrasGenericArtifactConfig>, Serializable {
 
     private static final long serialVersionUID = 1L;
 

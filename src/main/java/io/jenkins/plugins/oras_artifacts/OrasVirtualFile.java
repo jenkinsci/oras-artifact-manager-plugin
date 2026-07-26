@@ -6,6 +6,7 @@ import hudson.remoting.Callable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serial;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -17,26 +18,19 @@ import java.util.Set;
 import jenkins.util.VirtualFile;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@link VirtualFile} view over the files archived for a single build, backed by the OCI
  * referrers of the build's root artifact.
- *
- * <p>Since the registry doesn't have a notion of "directories", the directory tree is reconstructed
- * on the fly from the flat list of archived paths (similar to how the Artifactory/S3 artifact
- * managers work).
  */
 @Restricted(NoExternalUse.class)
 final class OrasVirtualFile extends VirtualFile {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrasVirtualFile.class);
 
     private final String repository;
     private final String tag;
-    /** Path relative to the artifacts root, using {@code /} separators, {@code ""} for the root. */
     private final String path;
 
     private final transient RegistryClient client;
@@ -71,8 +65,6 @@ final class OrasVirtualFile extends VirtualFile {
     @CheckForNull
     @Override
     public URL toExternalURL() {
-        // Direct external download isn't supported: the registry blob endpoints generally require
-        // the same authentication scheme used by the ORAS client.
         return null;
     }
 

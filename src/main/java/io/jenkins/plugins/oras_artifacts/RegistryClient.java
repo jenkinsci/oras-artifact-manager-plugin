@@ -5,10 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import land.oras.Annotations;
 import land.oras.ArtifactType;
 import land.oras.Config;
@@ -29,22 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Wraps a {@link Registry} and implements the archive-manager artifact model described in the
- * plugin design:
- *
- * <ul>
- *     <li>The OCI <b>repository</b> is the sanitized Jenkins job full name.</li>
- *     <li>Archived build artifacts are anchored by a "root" artifact tagged with the build number.
- *     The root artifact has no content of its own (it is just an anchor).</li>
- *     <li>Every archived file is pushed as its own single-layer manifest, referring to the root
- *     artifact via the OCI 1.1 {@code subject} field (a "referrer"). The archived path is stored in
- *     both a manifest annotation and the file's layer title annotation.</li>
- *     <li>Discovering the files archived for a build is a simple call to the referrers API of the
- *     root artifact digest - no separate index needs to be maintained.</li>
- *     <li>Stashes are simpler: a single tagged artifact ({@code stash-<name>}) with one tar.gz layer.</li>
- * </ul>
- *
- * <p>This is a first iteration prototype: operations are performed sequentially, without retries.
+ * Wraps a {@link Registry}
  */
 @Restricted(NoExternalUse.class)
 public final class RegistryClient {
@@ -96,7 +78,7 @@ public final class RegistryClient {
         if (exists(repository, tag)) {
             return;
         }
-        Annotations annotations = Annotations.ofManifest(new java.util.HashMap<>(Map.of(
+        Annotations annotations = Annotations.ofManifest(new HashMap<>(Map.of(
                 OrasNaming.ANNOTATION_JOB_FULL_NAME,
                 jobFullName,
                 OrasNaming.ANNOTATION_BUILD_NUMBER,
@@ -119,11 +101,9 @@ public final class RegistryClient {
      */
     public void archiveFile(String repository, String tag, String archivedPath, Path localFile) {
         ContainerRef ref = ref(repository, tag);
-        // The file annotation key must match the local file's own name (not the archived path),
-        // since that's what OCI#pushLayer uses as the lookup key for per-file annotations.
         String fileName = localFile.getFileName().toString();
         Annotations annotations = Annotations.ofManifest(
-                        new java.util.HashMap<>(Map.of(OrasNaming.ANNOTATION_ARCHIVED_PATH, archivedPath)))
+                        new HashMap<>(Map.of(OrasNaming.ANNOTATION_ARCHIVED_PATH, archivedPath)))
                 .withFileAnnotations(fileName, Map.of(Const.ANNOTATION_TITLE, archivedPath));
         registry.attachArtifact(
                 ref, ArtifactType.from(OrasNaming.ARCHIVED_FILE_ARTIFACT_TYPE), annotations, LocalPath.of(localFile));

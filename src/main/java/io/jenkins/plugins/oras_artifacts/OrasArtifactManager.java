@@ -21,6 +21,8 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import jenkins.agents.ControllerToAgentFileCallable;
@@ -34,9 +36,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * {@link ArtifactManager} storing archived artifacts and stashes in an OCI registry through ORAS.
- *
- * <p>This is a first iteration / prototype: every registry call is performed sequentially, without
- * retries and without concurrency, favoring simplicity over throughput.
  */
 @Restricted(NoExternalUse.class)
 public class OrasArtifactManager extends ArtifactManager implements StashManager.StashAwareArtifactManager {
@@ -149,7 +148,7 @@ public class OrasArtifactManager extends ArtifactManager implements StashManager
                 Path tmp = Files.createTempFile("oras-artifact-manager-copy-", ".bin");
                 try {
                     try (InputStream is = client.openFile(repository, tag, file.path())) {
-                        Files.copy(is, tmp, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                        Files.copy(is, tmp, StandardCopyOption.REPLACE_EXISTING);
                     }
                     client.archiveFile(targetManager.repository, targetManager.tag, file.path(), tmp);
                 } finally {
@@ -158,9 +157,6 @@ public class OrasArtifactManager extends ArtifactManager implements StashManager
             }
             listener.getLogger().printf("Copied %d artifact(s) to %s%n", files.size(), to);
         }
-        // Copy stashes: not tracked explicitly here since there's no index of stash names besides
-        // registry tags; a best-effort discovery via tag listing is done in RegistryClient if needed
-        // by callers. For this prototype, stashes are intentionally left to the caller to re-stash.
     }
 
     /**
@@ -173,7 +169,7 @@ public class OrasArtifactManager extends ArtifactManager implements StashManager
         private static final long serialVersionUID = 1L;
 
         @Override
-        public Void invoke(File workspace, VirtualChannel channel) throws IOException {
+        public Void invoke(File workspace, VirtualChannel channel) {
             RegistryClient client = connection.createClient();
             for (Map.Entry<String, String> entry : artifacts.entrySet()) {
                 String archivedPath = entry.getKey();
@@ -203,7 +199,7 @@ public class OrasArtifactManager extends ArtifactManager implements StashManager
 
         @Override
         public Void invoke(File f, VirtualChannel channel) throws IOException, InterruptedException {
-            java.nio.file.Path tempDirPath = java.nio.file.Paths.get(tempDir);
+            Path tempDirPath = Paths.get(tempDir);
             Files.createDirectories(tempDirPath);
             Path tmp = Files.createTempFile(tempDirPath, "stash", ".tgz");
             try {

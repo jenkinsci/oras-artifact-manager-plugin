@@ -5,14 +5,12 @@ import java.io.Serializable;
 import land.oras.Registry;
 
 /**
- * A self-contained, serializable descriptor of how to connect to the ORAS registry, resolved from
- * {@link OrasGenericArtifactConfig} on the Jenkins controller (where credentials lookup is
- * available) so that it can be shipped to a build agent over remoting.
+ * A self-contained, serializable descriptor of how to connect to the ORAS registry
  *
- * @param registryUrl the registry URL, e.g. {@code "registry.example.com"} or {@code "localhost:5000"}
+ * @param registryUrl the registry URL,
  * @param insecure whether to use plain HTTP and skip TLS verification
- * @param username the registry username, or {@code null} for anonymous / host-based auth
- * @param password the registry password, or {@code null} for anonymous / host-based auth
+ * @param username the registry username or null
+ * @param password the registry password or null
  */
 record OrasConnection(String registryUrl, boolean insecure, String username, String password) implements Serializable {
 
