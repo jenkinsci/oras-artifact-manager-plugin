@@ -1,6 +1,7 @@
 package io.jenkins.plugins.oras_artifacts;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -99,6 +100,7 @@ public final class RegistryClient {
      * @param archivedPath the archived path, relative to the artifacts root (e.g. {@code "dir/file.txt"})
      * @param localFile the local file to upload
      */
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     public void archiveFile(String repository, String tag, String archivedPath, Path localFile) {
         ContainerRef ref = ref(repository, tag);
         String fileName = localFile.getFileName().toString();
