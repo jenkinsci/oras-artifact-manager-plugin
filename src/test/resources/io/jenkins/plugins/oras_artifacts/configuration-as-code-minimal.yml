@@ -1,0 +1,6 @@
+unclassified:
+  artifactManager:
+    artifactManagerFactories:
+      - oras:
+          config:
+            registryUrl: "registry.example.com"
