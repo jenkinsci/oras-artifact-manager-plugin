@@ -1,0 +1,9 @@
+unclassified:
+  artifactManager:
+    artifactManagerFactories:
+      - oras:
+          config:
+            registryUrl: "localhost:5000"
+            credentialsId: "the-credentials-id"
+            prefix: "jenkins"
+            insecure: true
