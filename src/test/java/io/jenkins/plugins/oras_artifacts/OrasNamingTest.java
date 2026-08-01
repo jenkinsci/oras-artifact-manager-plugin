@@ -4,11 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-/**
- * Tests the sanitization logic turning Jenkins job/build/stash names into OCI-spec compliant
- * repository/tag names - this is the crux of how this plugin models artifacts, so it deserves
- * dedicated coverage beyond what's implicitly exercised by the other tests.
- */
 class OrasNamingTest {
 
     @Test

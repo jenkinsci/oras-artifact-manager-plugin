@@ -110,6 +110,13 @@ oras manifest fetch localhost:5000/test@sha256:4ab3a792e7052bb85cd2d75c8a5ae4910
   ]
 }
 ```
+
+The reference is also display for each Artifact
+
+![light mode](docs/light-mode.png)
+
+![dark mode](docs/dark-mode.png)
+
 ![zot.png](docs/zot.png)
 
 ## Getting started

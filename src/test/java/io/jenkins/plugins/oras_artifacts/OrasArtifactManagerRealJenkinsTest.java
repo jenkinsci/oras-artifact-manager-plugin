@@ -45,12 +45,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.RealJenkinsExtension;
 
 /**
- * End-to-end test running a real, separate Jenkins instance (via {@link RealJenkinsExtension})
- * against a WireMock stand-in OCI registry.
- *
- * <p>The WireMock server runs in this test's JVM; the Jenkins controller (and its build agent)
- * launched by {@link RealJenkinsExtension} runs in a separate JVM but talks to it over plain
- * {@code localhost} HTTP, exactly as it would talk to a real registry.
+ * End-to-end test using real jenkins rule
  */
 class OrasArtifactManagerRealJenkinsTest {
 
@@ -61,11 +56,7 @@ class OrasArtifactManagerRealJenkinsTest {
     private WireMockServer wireMockServer;
 
     /**
-     * Digest-addressed manifests (as pushed by {@code OCI#attachArtifact}) can't have a canned
-     * response body, since the client verifies the returned bytes hash to the digest in the URL.
-     * This transformer makes the stand-in registry behave like a real one for that specific path:
-     * it captures the body of every {@code PUT .../manifests/sha256:...} and echoes it back for the
-     * matching {@code GET}/{@code HEAD}.
+     * Ensure to echo the manifest digest for all manifest response (validated by ORAS java SDK)
      */
     private static final class EchoDigestManifestTransformer implements ResponseTransformerV2 {
 
