@@ -83,6 +83,27 @@ public class OrasArtifactManager extends ArtifactManager implements StashManager
         return new OrasVirtualFile(config.createClient(), repository, tag, "");
     }
 
+    /**
+     * The OCI repository this build's artifacts and referrers are stored under.
+     */
+    String getRepository() {
+        return repository;
+    }
+
+    /**
+     * The OCI tag of this build's root artifact.
+     */
+    String getTag() {
+        return tag;
+    }
+
+    /**
+     * The configuration used to reach the registry (registry URL, credentials, etc).
+     */
+    OrasGenericArtifactConfig getConfig() {
+        return config;
+    }
+
     @Override
     public void stash(
             @NonNull String name,

@@ -1,0 +1,9 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+    <j:if test="${it.enabled}">
+        <div id="oras-artifact-manager-icon-template" style="display:none" aria-hidden="true">
+            <l:icon src="symbol-oci-icon-solid plugin-oss-symbols-api" class="oras-artifact-manager-icon-source icon-sm" alt="ORAS artifact reference"/>
+        </div>
+        <st:adjunct includes="io.jenkins.plugins.oras_artifacts.OrasArtifactManagerPageDecorator.adjuncts.oras-reference"/>
+    </j:if>
+</j:jelly>
