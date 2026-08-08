@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import jenkins.model.ArtifactManagerConfiguration;
 import land.oras.ArtifactType;
@@ -34,6 +35,7 @@ import land.oras.Config;
 import land.oras.Manifest;
 import land.oras.utils.Const;
 import land.oras.utils.SupportedAlgorithm;
+import org.awaitility.Awaitility;
 import org.htmlunit.html.DomElement;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.DomNodeList;
@@ -240,9 +242,7 @@ class OrasArtifactReferenceUiRealJenkinsTest {
             // And the build page's artifact list is decorated with the reference icon.
             try (JenkinsRule.WebClient webClient = rule.createWebClient()) {
                 HtmlPage buildPage = webClient.goTo(job.getUrl() + "1/");
-                // Wait for Jenkins' async artifact list fetch, the fallback setTimeout scan,
-                // and the subsequent fetch() calls to the reference endpoint to all complete.
-                webClient.waitForBackgroundJavaScript(15_000);
+                waitForIcon(buildPage);
 
                 assertReferenceIcon(buildPage, wireMockPort);
             }
@@ -250,10 +250,26 @@ class OrasArtifactReferenceUiRealJenkinsTest {
             // The job overview page's "Last Successful Artifacts" summary is decorated too.
             try (JenkinsRule.WebClient webClient = rule.createWebClient()) {
                 HtmlPage jobPage = webClient.goTo(job.getUrl());
-                webClient.waitForBackgroundJavaScript(15_000);
+                waitForIcon(jobPage);
 
                 assertReferenceIcon(jobPage, wireMockPort);
             }
+        }
+
+        /**
+         * Waits until the reference icon appears in the page, or 30 seconds elapse.
+         *
+         * <p>{@code waitForBackgroundJavaScript} only drains scheduled JS tasks; it does not
+         * account for the async {@code fetch()} + DOM mutation lifecycle, which on a slow CI
+         * machine (e.g. Windows) can take longer than expected. Awaitility polls the DOM
+         * directly, which is reliable regardless of JS task scheduling.
+         */
+        private static void waitForIcon(HtmlPage page) {
+            Awaitility.await()
+                    .atMost(30, TimeUnit.SECONDS)
+                    .pollInterval(200, TimeUnit.MILLISECONDS)
+                    .until(() -> !page.querySelectorAll(".oras-artifact-manager-icon")
+                            .isEmpty());
         }
 
         private void assertReferenceIcon(HtmlPage page, int wireMockPort) {
